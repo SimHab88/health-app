@@ -1,22 +1,15 @@
 import MainNavigation from "./MainNavigation";
 import { ReactNode } from "react";
-
 interface PropsType {
   children: ReactNode;
 }
 
 const Layout: React.FC<PropsType> = ({ children }) => {
   return (
-    <div style={{ display: "block" }}>
+    <div>
       <MainNavigation></MainNavigation>
-      <main
-        style={{
-          paddingTop: "100px",
-          textAlign: "center",
-        }}
-      >
-        {children}
-      </main>
+      <p>Stuff</p>
+      <main>{children}</main>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { Neo4jGraphQL } from "@neo4j/graphql";
 import { OGM } from "@neo4j/graphql-ogm";
-// import { Neo4jGraphQLAuthJWTPlugin } from "@neo4j/graphql-plugin-auth";
+import { Neo4jGraphQLAuthJWTPlugin } from "@neo4j/graphql-plugin-auth";
 import { ApolloServer } from "apollo-server-micro";
 import { driver as _driver, auth as _auth } from "neo4j-driver";
 import jwt from "jsonwebtoken";
@@ -22,13 +22,26 @@ const typeDefs = `
         signUp(username: String!, password: String!): String! ### JWT
         signIn(username: String!, password: String!): String! ### JWT
     }
+    type Mutation {
+        myId: ID!
+    }
 `;
 
 const ogm = new OGM({ typeDefs, driver });
 const User = ogm.model("User");
 
 const resolvers = {
+  // Query: {
+  //   myId(_source, _args, context) {
+  //     console.log("stuff: ", context?.auth?.jwt?.sub);
+  //     return context.auth.jwt.sub;
+  //   },
+  // },
   Mutation: {
+    myId(_source, _args, context) {
+      console.log("stuff: ", context?.auth?.jwt?.sub);
+      return context.auth.jwt.sub;
+    },
     signUp: async (_source, { username, password }) => {
       const [existing] = await User.find({
         where: {
@@ -91,15 +104,18 @@ export default async function handler(req, res) {
     driver,
     resolvers,
     plugins: {
-      // auth: new Neo4jGraphQLAuthJWTPlugin({
-      //   secret: "secret",
-      // }),
+      auth: new Neo4jGraphQLAuthJWTPlugin({
+        secret: process.env.JWT_SECRET,
+      }),
     },
   });
 
   await ogm.init();
   const apolloServer = new ApolloServer({
     schema: await neoSchema.getSchema(),
+    context: ({ req }) => {
+      req;
+    },
   });
   await apolloServer.start();
   await apolloServer.createHandler({

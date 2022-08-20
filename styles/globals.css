@@ -24,8 +24,15 @@ a {
   --dark: #212121;
 }
 
+main {
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+}
+
 nav {
-  position: fixed;
+  position: top;
   top: 0;
   left: 0;
   right: 0;

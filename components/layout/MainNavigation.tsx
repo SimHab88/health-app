@@ -29,7 +29,17 @@ const MainNavigation: NextPage = () => {
               Diseases
             </a>
           </Link>
-          <Link href="/">Physicians</Link>
+          <Link href="/physicians">
+            <a
+              style={
+                router.asPath.includes("/physicians")
+                  ? { backgroundColor: "var(--primary)" }
+                  : {}
+              }
+            >
+              Physicians
+            </a>
+          </Link>
           <Link href="/">Contact</Link>
         </div>
 
@@ -44,9 +54,10 @@ const MainNavigation: NextPage = () => {
           <span></span>
         </button>
         <Link href="/signup">
-          <a className={classes.login}>
-            <AiOutlineLogin size="30"></AiOutlineLogin>
-          </a>
+          <AiOutlineLogin
+            size="30"
+            style={{ color: "#fff", cursor: "pointer" }}
+          ></AiOutlineLogin>
         </Link>
       </div>
     </nav>

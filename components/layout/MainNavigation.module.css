@@ -1,5 +1,7 @@
 .container {
   margin: 0 auto;
+  position: top;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
