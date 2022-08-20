@@ -15,6 +15,7 @@
     "test-all": "npm run check-format && npm run check-lint && npm run check-types && npm run build"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
     "@neo4j/graphql": "^3.6.2",
     "@neo4j/graphql-ogm": "^3.6.2",
     "@neo4j/graphql-plugin-auth": "^1.0.0",

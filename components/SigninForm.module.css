@@ -1,6 +1,8 @@
 .inputContainer {
-  text-align: left;
-  padding: 30px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
 }
 
 .inputContainer input {
@@ -19,10 +21,13 @@
 }
 
 .form {
+  border-radius: 10px;
+  background-color: white;
   border-width: 5px;
   border-style: solid;
   padding: 30px;
   border-color: var(--primary);
+  text-align: center;
 }
 
 .submitButton {

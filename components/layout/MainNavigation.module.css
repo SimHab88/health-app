@@ -15,7 +15,7 @@
 }
 
 .menu {
-  display: none;
+  display: block;
   /* flex: 1 1 0%; */
   justify-content: flex-end;
   margin: 0 16px;
@@ -25,7 +25,7 @@
   color: #fff;
   margin: 0 16px;
   font-weight: 600;
-  text-decoration: none;
+  text-decoration: block;
   transition: 0.4s;
   padding: 8px 16px;
   border-radius: 99px;
@@ -37,7 +37,7 @@
 }
 
 .hamburger {
-  display: block;
+  display: none;
   position: relative;
   z-index: 1;
   user-select: none;
@@ -87,11 +87,17 @@
   color: #fff;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .hamburger {
-    display: none;
+    display: block;
   }
   .menu {
-    display: block;
+    display: none;
+    flex-direction: column;
+    right: 0px;
+    margin: 0px;
+
+    top: 100px;
+    background-color: black;
   }
 }

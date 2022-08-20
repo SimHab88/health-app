@@ -1,17 +1,14 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import classes from "./Modal.module.css";
 
 interface PropsType {
-  children: ReactNode;
-  link: string;
+  children?: ReactNode;
 }
 
-const Modal: React.FC<PropsType> = ({ children, link }) => {
+const Modal: React.FC<PropsType> = ({ children }) => {
   const router = useRouter();
-
   return (
     <div className={classes.overlay} onClick={() => router.back()}>
       <div

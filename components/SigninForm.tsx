@@ -1,14 +1,21 @@
 import { useFormik } from "formik";
+import Link from "next/link";
+import { Dispatch, SetStateAction } from "react";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 import * as Yup from "yup";
-import Modal from "./Modal";
-import classes from "./SignupForm.module.css";
+import useAuth from "../hooks/auth";
+import classes from "./SigninForm.module.css";
+interface Props {
+  loginCallback: Dispatch<SetStateAction<boolean>>;
+}
 
-const SignupForm: React.FC = () => {
+const SignupForm: React.FC<Props> = ({ loginCallback }) => {
+  const { signIn } = useAuth();
+
   const formik = useFormik({
     initialValues: {
       username: "",
       password: "",
-      email: "",
     },
     validationSchema: Yup.object({
       username: Yup.string()
@@ -17,16 +24,35 @@ const SignupForm: React.FC = () => {
       password: Yup.string()
         .max(15, "Must be 15 characters or less")
         .required("Required"),
-      email: Yup.string().email("Invalid email address").required("Required"),
     }),
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      await signIn({
+        username: values.username,
+        password: values.password,
+      })
+        .then((res) => console.log("Login: ", res))
+        .catch((e) => console.log("Login error: ", e));
     },
   });
 
-  console.log(formik.errors);
   return (
-    <Modal>
+    <div
+      style={{
+        position: "absolute",
+        backgroundColor: "transparent",
+        direction: "ltr",
+      }}
+    >
+      <AiOutlineCloseCircle
+        onClick={() => loginCallback(false)}
+        size="30"
+        style={{
+          position: "absolute",
+          top: "8px",
+          right: " 8px",
+          cursor: "pointer",
+        }}
+      ></AiOutlineCloseCircle>
       <form className={classes.form} onSubmit={formik.handleSubmit}>
         <div className={classes.inputContainer}>
           <input
@@ -40,21 +66,6 @@ const SignupForm: React.FC = () => {
           ></input>
           {formik.errors.username && formik.touched.username ? (
             <p>{formik.errors.username}</p>
-          ) : null}
-        </div>
-
-        <div className={classes.inputContainer} style={{ paddingTop: "0px" }}>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={formik.values.email}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-          ></input>
-          {formik.errors.email && formik.touched.email ? (
-            <p>{formik.errors.email}</p>
           ) : null}
         </div>
         <div className={classes.inputContainer} style={{ paddingTop: "0px" }}>
@@ -71,11 +82,21 @@ const SignupForm: React.FC = () => {
             <p>{formik.errors.password}</p>
           ) : null}
         </div>
-        <button className={classes.submitButton} type="submit">
-          Create User
-        </button>
+        <div>
+          <button className={classes.submitButton} type="submit">
+            Login
+          </button>{" "}
+          <Link href="/signup">
+            <button
+              onClick={() => loginCallback(false)}
+              className={classes.submitButton}
+            >
+              Signup
+            </button>
+          </Link>
+        </div>
       </form>
-    </Modal>
+    </div>
   );
 };
 

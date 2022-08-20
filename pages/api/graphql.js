@@ -22,8 +22,8 @@ const typeDefs = `
         signUp(username: String!, password: String!): String! ### JWT
         signIn(username: String!, password: String!): String! ### JWT
     }
-    type Mutation {
-        myId: ID!
+    type Query {
+        myId: String!
     }
 `;
 
@@ -31,17 +31,14 @@ const ogm = new OGM({ typeDefs, driver });
 const User = ogm.model("User");
 
 const resolvers = {
-  // Query: {
-  //   myId(_source, _args, context) {
-  //     console.log("stuff: ", context?.auth?.jwt?.sub);
-  //     return context.auth.jwt.sub;
-  //   },
-  // },
-  Mutation: {
-    myId(_source, _args, context) {
-      console.log("stuff: ", context?.auth?.jwt?.sub);
-      return context.auth.jwt.sub;
+  Query: {
+    myId: async (_, __, context) => {
+      console.log("c: ", context.auth);
+
+      return "good";
     },
+  },
+  Mutation: {
     signUp: async (_source, { username, password }) => {
       const [existing] = await User.find({
         where: {
@@ -61,7 +58,9 @@ const resolvers = {
         ],
       });
       const id = users[0].id;
-      return jwt.sign({ id, username }, process.env.JWT_SECRET);
+      return jwt.sign({ id, username }, process.env.JWT_SECRET, {
+        expiresIn: "5s",
+      });
     },
     signIn: async (_source, { username, password }) => {
       const [user] = await User.find({
@@ -114,7 +113,9 @@ export default async function handler(req, res) {
   const apolloServer = new ApolloServer({
     schema: await neoSchema.getSchema(),
     context: ({ req }) => {
-      req;
+      return {
+        req,
+      };
     },
   });
   await apolloServer.start();
