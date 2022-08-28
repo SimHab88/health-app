@@ -12,9 +12,31 @@ const driver = _driver(
 );
 
 const typeDefs = `
+    type Movie {
+      title: String! @unique
+      year: Int
+      plot: String
+      actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+    }
+
+    type Person {
+      name: String! @unique
+      movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+    }
+
+    type Disease {
+      name: String! @unique
+      symptoms: [Symptom!]! @relationship(type: "CAUSES", direction: OUT)
+    }
+
+    type Symptom {
+      name: String! @unique
+    }
+
+
     type User {
         id: ID @id
-        username: String!
+        username: String! 
         password: String! @private
     }
 
@@ -22,22 +44,12 @@ const typeDefs = `
         signUp(username: String!, password: String!): String! ### JWT
         signIn(username: String!, password: String!): String! ### JWT
     }
-    type Query {
-        myId: String!
-    }
 `;
 
 const ogm = new OGM({ typeDefs, driver });
 const User = ogm.model("User");
 
 const resolvers = {
-  Query: {
-    myId: async (_, __, context) => {
-      console.log("c: ", context.auth);
-
-      return "good";
-    },
-  },
   Mutation: {
     signUp: async (_source, { username, password }) => {
       const [existing] = await User.find({
@@ -59,7 +71,7 @@ const resolvers = {
       });
       const id = users[0].id;
       return jwt.sign({ id, username }, process.env.JWT_SECRET, {
-        expiresIn: "5s",
+        expiresIn: "5d",
       });
     },
     signIn: async (_source, { username, password }) => {
@@ -110,14 +122,18 @@ export default async function handler(req, res) {
   });
 
   await ogm.init();
+  const schema = await neoSchema.getSchema();
+  await neoSchema.assertIndexesAndConstraints({ options: { create: true } });
+
   const apolloServer = new ApolloServer({
-    schema: await neoSchema.getSchema(),
+    schema: schema,
     context: ({ req }) => {
       return {
         req,
       };
     },
   });
+
   await apolloServer.start();
   await apolloServer.createHandler({
     path: "/api/graphql",

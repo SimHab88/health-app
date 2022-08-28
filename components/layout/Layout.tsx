@@ -6,9 +6,8 @@ interface PropsType {
 
 const Layout: React.FC<PropsType> = ({ children }) => {
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <MainNavigation></MainNavigation>
-      <p>Stuff</p>
       <main>{children}</main>
     </div>
   );

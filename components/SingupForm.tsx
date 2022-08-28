@@ -1,9 +1,13 @@
 import { useFormik } from "formik";
+import { GraphQLError } from "graphql";
 import * as Yup from "yup";
+import useAuth from "../hooks/auth";
 import Modal from "./Modal";
 import classes from "./SignupForm.module.css";
 
 const SignupForm: React.FC = () => {
+  const { signUp } = useAuth();
+
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -19,12 +23,20 @@ const SignupForm: React.FC = () => {
         .required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
     }),
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      await signUp({
+        username: values.username,
+        password: values.password,
+      })
+        .then((res: string | readonly GraphQLError[] | undefined) =>
+          console.log("Login: ", res)
+        )
+        .catch((e: readonly GraphQLError[] | undefined) =>
+          console.log("Login error: ", e)
+        );
     },
   });
 
-  console.log(formik.errors);
   return (
     <Modal>
       <form className={classes.form} onSubmit={formik.handleSubmit}>

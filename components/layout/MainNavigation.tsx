@@ -12,12 +12,27 @@ const MainNavigation: NextPage = () => {
   const [isHamburgerActive, setHamburgerActive] = useState(false);
   const router = useRouter();
   return (
-    <div className="overlay" onClick={() => setRenderLogin(false)}>
+    <div>
+      <div className="overlay" onClick={() => setRenderLogin(false)}></div>
       <nav>
         <div className={classes.container}>
           <h1 className={classes.navTitle}>Home</h1>
-          <div>
-            <div className={classes.menu}>
+          <button
+            onClick={() => setHamburgerActive(!isHamburgerActive)}
+            className={`${classes.hamburger} ${
+              isHamburgerActive ? classes.isActive : ""
+            }`}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div className={classes.navigation}>
+            <div
+              className={`${classes.menu} ${
+                isHamburgerActive ? classes.activeHamburgerDropdown : ""
+              }`}
+            >
               <Link href="/">
                 <a>Home</a>
               </Link>
@@ -46,21 +61,10 @@ const MainNavigation: NextPage = () => {
               </Link>
               <Link href="/">Contact</Link>
             </div>
-            <button
-              onClick={() => setHamburgerActive(!isHamburgerActive)}
-              className={`${classes.hamburger} ${
-                isHamburgerActive ? classes.isActive : ""
-              }`}
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
           </div>
-          <div style={{ display: "flex" }}>
+          <div className={classes.login}>
             <div className="dropdown" onClick={(e) => e.stopPropagation()}>
               <a
-                className="link"
                 onClick={() => {
                   setRenderLogin(!renderLogin);
                 }}

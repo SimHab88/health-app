@@ -19,13 +19,14 @@
   /* flex: 1 1 0%; */
   justify-content: flex-end;
   margin: 0 16px;
+  transition: display 1s ease-in-out;
 }
 
 .menu a {
   color: #fff;
   margin: 0 16px;
   font-weight: 600;
-  text-decoration: block;
+  text-decoration: none;
   transition: 0.4s;
   padding: 8px 16px;
   border-radius: 99px;
@@ -91,13 +92,34 @@
   .hamburger {
     display: block;
   }
-  .menu {
-    display: none;
-    flex-direction: column;
+  .navigation {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    top: 100px;
+    left: 0px;
     right: 0px;
     margin: 0px;
+    padding: 0px;
+  }
 
-    top: 100px;
+  .menu.activeHamburgerDropdown {
+    opacity: 1;
+    transition: opacity 1s;
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
     background-color: black;
+    text-align: center;
+    padding: 20px;
+    font-size: xx-large;
+    opacity: 0;
+    transition: opacity 1s;
+  }
+
+  .login {
+    display: none;
   }
 }

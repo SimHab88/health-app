@@ -7,6 +7,7 @@ import {
   gql,
   NormalizedCacheObject,
 } from "@apollo/client";
+import { GraphQLError } from "graphql";
 
 interface ContextType {
   setAuthToken: React.Dispatch<React.SetStateAction<null>>;
@@ -20,10 +21,18 @@ interface ContextType {
     username: string;
     password: string;
   }) => Promise<void>;
+  signUp: ({
+    // eslint-disable-next-line no-unused-vars
+    username,
+    // eslint-disable-next-line no-unused-vars
+    password,
+  }: {
+    username: string;
+    password: string;
+  }) => Promise<readonly GraphQLError[] | string | undefined>;
   signOut: () => void;
   createApolloClient: () => ApolloClient<NormalizedCacheObject>;
 }
-
 const authContext = createContext<ContextType>({} as ContextType);
 
 interface PropsType {
@@ -100,10 +109,38 @@ function useProvideAuth() {
       mutation: LoginMutation,
       variables: { username, password },
     });
+    console.log("signin: ", result);
 
-    if (result?.data?.login?.token) {
-      setAuthToken(result.data.login.token);
+    if (result?.data?.signIn) {
+      setAuthToken(result.data.signIn);
     }
+  };
+
+  const signUp = async ({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<string | readonly GraphQLError[] | undefined> => {
+    const client = createApolloClient();
+    const SignUpMutation = gql`
+      mutation ($username: String!, $password: String!) {
+        signUp(username: $username, password: $password)
+      }
+    `;
+
+    const result = await client.mutate({
+      mutation: SignUpMutation,
+      variables: { username, password },
+    });
+
+    if (result?.data?.signUp) {
+      setAuthToken(result.data.signUp);
+      return "Account created successfully";
+    }
+
+    return result.errors;
   };
 
   const signOut = () => {
@@ -111,6 +148,7 @@ function useProvideAuth() {
   };
 
   return {
+    signUp,
     setAuthToken,
     isSignedIn,
     signIn,
