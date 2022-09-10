@@ -24,11 +24,14 @@ const typeDefs = `
       movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
     }
 
-    type Disease {
+    type Disease @auth(rules: [
+    { operations: [CREATE], isAuthenticated: true, roles:["someDude"] }
+]) {
       name: String! @unique
       symptoms: [Symptom!]! @relationship(type: "CAUSES", direction: OUT)
     }
 
+    
     type Symptom {
       name: String! @unique
     }
@@ -38,18 +41,32 @@ const typeDefs = `
         id: ID @id
         username: String! 
         password: String! @private
+        roles: String! @default(value: "someDude")
     }
 
     type Mutation {
         signUp(username: String!, password: String!): String! ### JWT
         signIn(username: String!, password: String!): String! ### JWT
     }
+
+    type Query {
+        myId: String!
+    }
 `;
 
+//extend type Disease @auth(rules: [{ isAuthenticated: true, operations: [UPDATE, CREATE] }])
+//@auth(rules: [{ isAuthenticated: true, operations:[CREATE] }])
 const ogm = new OGM({ typeDefs, driver });
 const User = ogm.model("User");
 
 const resolvers = {
+  Query: {
+    myId: async (_, __, context) => {
+      console.log("c: ", context.auth);
+
+      return JSON.stringify(context.auth);
+    },
+  },
   Mutation: {
     signUp: async (_source, { username, password }) => {
       const [existing] = await User.find({
@@ -70,7 +87,8 @@ const resolvers = {
         ],
       });
       const id = users[0].id;
-      return jwt.sign({ id, username }, process.env.JWT_SECRET, {
+      const roles = users[0].roles;
+      return jwt.sign({ id, username, roles }, process.env.JWT_SECRET, {
         expiresIn: "5d",
       });
     },
@@ -90,7 +108,8 @@ const resolvers = {
         );
       }
       const id = user.id;
-      return jwt.sign({ id, username }, process.env.JWT_SECRET);
+      const roles = user.roles;
+      return jwt.sign({ id, username, roles }, process.env.JWT_SECRET);
     },
   },
 };

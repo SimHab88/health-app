@@ -1,14 +1,42 @@
 .inputContainer {
   padding: 10px;
   text-align: left;
+  display: flex;
+
+  flex-direction: column;
+  height: auto;
+  opacity: 1;
+  visibility: inherit;
+  transition: opacity 1s;
 }
 
-@keyframes SymptomInput {
+.remove {
+  opacity: 0;
+}
+
+.suggestionContainer {
+  position: absolute;
+  transform: translateY(35px);
+  border-radius: 0 0 5px 5px;
+  background-color: white;
+  border-width: 1px;
+  border-style: solid;
+  width: 200px;
+  padding: 5px 5px 5px 15px;
+}
+
+.suggestionContainer > ul > li {
+  list-style: none;
+}
+
+@keyframes SymptomeInput {
   0% {
-    opacity: 0;
+    opacity: 1;
+    transform: scale(1);
   }
   100% {
-    opacity: 1;
+    opacity: 0;
+    transform: scale(0);
   }
 }
 
@@ -20,17 +48,25 @@
   background-color: rgb(212, 212, 238);
 }
 
-.inputContainerSymptom {
-  display: flex;
-  align-items: center;
-}
-
 .inputContainer p {
   padding-left: 10px;
   margin: 0;
   color: red;
   font-size: 1rem;
 }
+
+@keyframes removeContainer {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+    visibility: collapse;
+  }
+}
+
 .createButton {
   cursor: pointer;
   padding: 10px;
@@ -56,8 +92,22 @@
   background-color: white;
   border-width: 5px;
   border-style: solid;
-  padding: 30px;
+  padding: 40px;
   border-color: var(--primary);
+  transform: scaleY(1);
+  max-height: 1000px;
+  transition: all 1s;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+}
+
+.transition {
+  max-height: 0;
+  transform: scaleY(1);
+
+  transition: all 1s;
 }
 
 @keyframes formAnimation {

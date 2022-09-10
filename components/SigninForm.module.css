@@ -31,6 +31,7 @@
 }
 
 .submitButton {
+  position: relative;
   cursor: pointer;
   padding: 10px;
   opacity: 0.9;
@@ -47,4 +48,16 @@
 .submitButton:active {
   scale: 0.9;
   transition: 0.15s;
+}
+
+.signingIn {
+  animation: SigningIn 0.1s linear infinite;
+}
+
+@keyframes SigningIn {
+  0% {
+  }
+  100% {
+    opacity: 0.5;
+  }
 }

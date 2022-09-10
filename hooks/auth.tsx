@@ -10,6 +10,7 @@ import {
 import { GraphQLError } from "graphql";
 
 interface ContextType {
+  loginState: boolean;
   setAuthToken: React.Dispatch<React.SetStateAction<null>>;
   isSignedIn: () => boolean;
   signIn: ({
@@ -20,7 +21,7 @@ interface ContextType {
   }: {
     username: string;
     password: string;
-  }) => Promise<void>;
+  }) => Promise<string | readonly GraphQLError[] | undefined>;
   signUp: ({
     // eslint-disable-next-line no-unused-vars
     username,
@@ -56,6 +57,7 @@ export const useAuth = () => {
 
 function useProvideAuth() {
   const [authToken, setAuthToken] = useState(null);
+  const [loginState, setLoginState] = useState(false);
 
   const isSignedIn = () => {
     if (authToken) {
@@ -97,7 +99,7 @@ function useProvideAuth() {
   }: {
     username: string;
     password: string;
-  }) => {
+  }): Promise<string | readonly GraphQLError[] | undefined> => {
     const client = createApolloClient();
     const LoginMutation = gql`
       mutation ($username: String!, $password: String!) {
@@ -109,10 +111,11 @@ function useProvideAuth() {
       mutation: LoginMutation,
       variables: { username, password },
     });
-    console.log("signin: ", result);
 
     if (result?.data?.signIn) {
+      setLoginState(true);
       setAuthToken(result.data.signIn);
+      return "Account created successfully";
     }
   };
 
@@ -136,6 +139,7 @@ function useProvideAuth() {
     });
 
     if (result?.data?.signUp) {
+      setLoginState(true);
       setAuthToken(result.data.signUp);
       return "Account created successfully";
     }
@@ -144,10 +148,13 @@ function useProvideAuth() {
   };
 
   const signOut = () => {
+    console.log("signing out...");
+    setLoginState(false);
     setAuthToken(null);
   };
 
   return {
+    loginState,
     signUp,
     setAuthToken,
     isSignedIn,

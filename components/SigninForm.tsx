@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
 import Link from "next/link";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import { ClipLoader } from "react-spinners";
 import * as Yup from "yup";
 import useAuth from "../hooks/auth";
 import classes from "./SigninForm.module.css";
@@ -10,7 +11,9 @@ interface Props {
 }
 
 const SignupForm: React.FC<Props> = ({ loginCallback }) => {
-  const { signIn } = useAuth();
+  const { signIn, signOut } = useAuth();
+  const [signingIn, setSigningIn] = useState(false);
+  const [loginMessage, setLoginMessage] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -26,12 +29,22 @@ const SignupForm: React.FC<Props> = ({ loginCallback }) => {
         .required("Required"),
     }),
     onSubmit: async (values) => {
+      setLoginMessage("");
+      setSigningIn(true);
+      setTimeout(() => console.log(""), 3000);
       await signIn({
         username: values.username,
         password: values.password,
       })
-        .then((res) => console.log("Login: ", res))
-        .catch((e) => console.log("Login error: ", e));
+        .then((res) => {
+          console.log("Login: ", res);
+          loginCallback(false);
+        })
+        .catch((e) => {
+          setLoginMessage(e.message);
+          signOut();
+        });
+      setSigningIn(false);
     },
   });
 
@@ -82,8 +95,14 @@ const SignupForm: React.FC<Props> = ({ loginCallback }) => {
             <p>{formik.errors.password}</p>
           ) : null}
         </div>
+        {loginMessage && <p style={{ color: "red" }}>{loginMessage}</p>}
         <div>
-          <button className={classes.submitButton} type="submit">
+          <button
+            className={`${classes.submitButton} ${
+              signingIn ? classes.signingIn : ""
+            }`}
+            type="submit"
+          >
             Login
           </button>{" "}
           <Link href="/signup">

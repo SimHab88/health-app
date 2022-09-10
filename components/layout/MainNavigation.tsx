@@ -3,11 +3,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import classes from "./MainNavigation.module.css";
-import { AiOutlineLogin } from "react-icons/ai";
+import { AiOutlineLogin, AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
 import SigninForm from "../SigninForm";
+import useAuth from "../../hooks/auth";
+import { motion } from "framer-motion";
 
 const MainNavigation: NextPage = () => {
   const [renderLogin, setRenderLogin] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const { loginState, signOut } = useAuth();
 
   const [isHamburgerActive, setHamburgerActive] = useState(false);
   const router = useRouter();
@@ -69,7 +73,30 @@ const MainNavigation: NextPage = () => {
                   setRenderLogin(!renderLogin);
                 }}
               >
-                <AiOutlineLogin
+                {!loginState ? (
+                  <AiOutlineLogin
+                    size="30"
+                    style={{
+                      marginLeft: "10px",
+                      color: "#fff",
+                      cursor: "pointer",
+                      backgroundColor: "var(--dark)",
+                    }}
+                  ></AiOutlineLogin>
+                ) : (
+                  <AiOutlineUser
+                    size="30"
+                    style={{
+                      marginLeft: "10px",
+                      color: "#fff",
+                      cursor: "pointer",
+                      backgroundColor: "var(--dark)",
+                    }}
+                  ></AiOutlineUser>
+                )}
+              </a>
+              <a onClick={() => signOut()}>
+                <AiOutlineLogout
                   size="30"
                   style={{
                     marginLeft: "10px",
@@ -77,13 +104,15 @@ const MainNavigation: NextPage = () => {
                     cursor: "pointer",
                     backgroundColor: "var(--dark)",
                   }}
-                ></AiOutlineLogin>
+                ></AiOutlineLogout>
               </a>
               <div
                 className={`dropdown-menu ${renderLogin ? "login-active" : ""}`}
                 style={{ direction: "rtl", right: "0px", borderRadius: "10px" }}
               >
-                <SigninForm loginCallback={setRenderLogin}></SigninForm>
+                {!loginState && (
+                  <SigninForm loginCallback={setRenderLogin}></SigninForm>
+                )}
               </div>
             </div>
           </div>
