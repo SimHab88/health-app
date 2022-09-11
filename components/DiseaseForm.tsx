@@ -2,10 +2,11 @@ import classes from "./DiseaseForm.module.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IoIosAddCircle, IoMdRemoveCircle } from "react-icons/io";
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import useAuth from "../hooks/auth";
 import { gql } from "@apollo/client";
 import clsx from "classnames";
+import { authQuery, createDiseaseMutation } from "../graphql/crud";
 
 const DiseaseForm = () => {
   const { createApolloClient } = useAuth();
@@ -24,7 +25,7 @@ const DiseaseForm = () => {
     }, 1000);
   }, [removeIdx]);
 
-  const cslxSymptomeInput = useCallback(
+  const cslxSymptomInput = useCallback(
     (idx: number): string => {
       return clsx({
         [classes.remove]: removeIdx === idx,
@@ -40,7 +41,7 @@ const DiseaseForm = () => {
     });
   }, [removeIdx]);
 
-  const handleDiseaseInput = async (input) => {
+  const handleDiseaseInput = async (input: ChangeEvent<HTMLInputElement>) => {
     const createDiseaseMutation = gql`
       query ($str: String!) {
         diseases(where: { name_STARTS_WITH: $str }) {
@@ -57,11 +58,12 @@ const DiseaseForm = () => {
         },
       });
 
-      setSuggestions(result?.data.diseases.map((d) => d.name));
+      setSuggestions(
+        result?.data.diseases.map((d: { name: string }) => d.name)
+      );
 
       console.log("res: ", result);
       console.log("suggestions: ", suggestions);
-
       console.log("input changes: ", input.currentTarget?.value);
     } else {
       setSuggestions([]);
@@ -79,25 +81,6 @@ const DiseaseForm = () => {
       symptom: Yup.array().min(1, "You must add at least one symptom"),
     }),
     onSubmit: async (values) => {
-      const createDiseaseMutation = gql`
-        mutation ($disease: String!, $symptoms: DiseaseSymptomsFieldInput) {
-          createDiseases(input: { name: $disease, symptoms: $symptoms }) {
-            diseases {
-              name
-              symptoms {
-                name
-              }
-            }
-          }
-        }
-      `;
-
-      const authQuery = gql`
-        query {
-          myId
-        }
-      `;
-
       console.log("auth: ", await client.mutate({ mutation: authQuery }));
       const result = await client.mutate({
         mutation: createDiseaseMutation,
@@ -154,7 +137,7 @@ const DiseaseForm = () => {
         ) : null}
       </div>
       {formik.initialValues.symptom.map((s, i) => (
-        <div key={`symptom.${i}`} className={cslxSymptomeInput(i)}>
+        <div key={`symptom.${i}`} className={cslxSymptomInput(i)}>
           <div
             style={{
               display: "flex",

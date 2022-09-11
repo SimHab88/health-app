@@ -1,8 +1,5 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-import { gql } from "apollo-server-micro";
 import type { NextPage } from "next";
 import DiseaseForm from "../../components/DiseaseForm";
-import jwt from "jsonwebtoken";
 
 const Diseases: NextPage = () => {
   return (
@@ -14,7 +11,7 @@ const Diseases: NextPage = () => {
   );
 };
 
-export async function getStaticProps(context) {
+export async function getStaticProps() {
   // const admin = {
   //   id: 1,
   //   username: "admin",

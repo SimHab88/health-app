@@ -14,9 +14,43 @@
   text-transform: uppercase;
 }
 
+.loginPopup {
+  direction: rtl;
+  right: 0px;
+  border-radius: 10px;
+}
+
+.hideContainer {
+  display: none;
+}
+
+.popupClosed {
+  visibility: collapse;
+}
+
+.userContainer {
+  direction: rtl;
+  position: relative;
+}
+
+.loginContainer {
+  direction: rtl;
+  position: relative;
+}
+
+.userPopup {
+  position: absolute;
+  border-radius: 10px;
+  background-color: white;
+  border-width: 5px;
+  border-style: solid;
+  padding: 30px;
+  border-color: var(--primary);
+  text-align: center;
+}
+
 .menu {
   display: block;
-  /* flex: 1 1 0%; */
   justify-content: flex-end;
   margin: 0 16px;
   transition: display 1s ease-in-out;
@@ -82,10 +116,6 @@
 
 .hamburger.isActive:hover span {
   background-color: var(--primary);
-}
-
-.login {
-  color: #fff;
 }
 
 @media (max-width: 768px) {

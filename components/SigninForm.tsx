@@ -2,7 +2,6 @@ import { useFormik } from "formik";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { ClipLoader } from "react-spinners";
 import * as Yup from "yup";
 import useAuth from "../hooks/auth";
 import classes from "./SigninForm.module.css";
@@ -64,6 +63,7 @@ const SignupForm: React.FC<Props> = ({ loginCallback }) => {
           top: "8px",
           right: " 8px",
           cursor: "pointer",
+          color: "black",
         }}
       ></AiOutlineCloseCircle>
       <form className={classes.form} onSubmit={formik.handleSubmit}>
