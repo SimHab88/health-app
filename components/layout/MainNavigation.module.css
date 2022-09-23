@@ -1,7 +1,6 @@
 .container {
   margin: 0 auto;
-  position: top;
-  height: auto;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18,6 +17,7 @@
   direction: rtl;
   right: 0px;
   border-radius: 10px;
+  z-index: 99;
 }
 
 .hideContainer {
@@ -136,6 +136,7 @@
   .menu.activeHamburgerDropdown {
     opacity: 1;
     transition: opacity 1s;
+    z-index: 99;
   }
 
   .menu {

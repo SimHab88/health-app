@@ -75,7 +75,7 @@ function useProvideAuth() {
       };
 
     return {
-      authorization: `Bearer ${authToken}`,
+      //authorization: `Bearer ${authToken}`,
       contentType: "application/json",
       type: "POST",
     };
@@ -114,7 +114,7 @@ function useProvideAuth() {
 
     if (result?.data?.signIn) {
       setLoginState(true);
-      setAuthToken(result.data.signIn);
+      //setAuthToken(result.data.signIn);
       return "Account created successfully";
     }
   };

@@ -5,6 +5,7 @@ import { ApolloServer } from "apollo-server-micro";
 import { driver as _driver, auth as _auth } from "neo4j-driver";
 import jwt from "jsonwebtoken";
 import { compareSync, hashSync } from "bcrypt";
+import { serialize } from "cookie";
 
 const driver = _driver(
   process.env.NEO4J_URI,
@@ -92,7 +93,7 @@ const resolvers = {
         expiresIn: "5d",
       });
     },
-    signIn: async (_source, { username, password }) => {
+    signIn: async (parent, { username, password }, { req, res }, info) => {
       const [user] = await User.find({
         where: {
           username,
@@ -109,7 +110,19 @@ const resolvers = {
       }
       const id = user.id;
       const roles = user.roles;
-      return jwt.sign({ id, username, roles }, process.env.JWT_SECRET);
+
+      const token = jwt.sign({ id, username, roles }, process.env.JWT_SECRET);
+      res.setHeader(
+        "Set-Cookie",
+        serialize("token", `Bearer ${token}`, {
+          path: "/",
+          httpOnly: true,
+          expiresIn: 60,
+          secure: true,
+        })
+      );
+
+      return token;
     },
   },
 };
@@ -146,9 +159,11 @@ export default async function handler(req, res) {
 
   const apolloServer = new ApolloServer({
     schema: schema,
-    context: ({ req }) => {
+    context: ({ req, res }) => {
+      console.log("req!!!!!: ", req.cookies);
       return {
         req,
+        res,
       };
     },
   });

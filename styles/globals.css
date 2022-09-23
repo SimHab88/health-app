@@ -22,6 +22,7 @@ a {
   --primary: #8c38ff;
   --light: #eeeeee;
   --dark: #212121;
+  --navHeight: 75px;
 }
 
 main {

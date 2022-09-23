@@ -20,16 +20,14 @@ const MainNavigation: NextPage = () => {
   }, [loginState]);
 
   useEffect(() => {
-    if (!loginPopup) return;
+    if (!loginPopup && !userPopup) return;
     function handleClick() {
-      toggleLoginPopup(!loginPopup);
-      toggleUserPopup(!userPopup);
+      if (loginPopup) toggleLoginPopup(!loginPopup);
+      if (userPopup) toggleUserPopup(!userPopup);
     }
     window.addEventListener("click", handleClick);
     return () => window.removeEventListener("click", handleClick);
-  }, [loginPopup]);
-
-  console.log("render login: ", loginPopup);
+  }, [loginPopup, userPopup]);
 
   const clsxUserContainer = () => {
     return clsx({
@@ -60,8 +58,7 @@ const MainNavigation: NextPage = () => {
 
   const router = useRouter();
   return (
-    <div>
-      <div className="overlay" onClick={() => toggleLoginPopup(false)}></div>
+    <div style={{ zIndex: "99", position: "fixed", width: "100%" }}>
       <nav>
         <div className={classes.container}>
           <h1 className={classes.navTitle}>Home</h1>
@@ -110,65 +107,60 @@ const MainNavigation: NextPage = () => {
               <Link href="/">Contact</Link>
             </div>
           </div>
-          <div className={classes.login}>
-            <div onClick={(e) => e.stopPropagation()}>
-              <a
-                onClick={() => {
-                  toggleLoginPopup(!loginPopup);
-                }}
-              >
-                <div className={clsxLoginContainer()}>
-                  <AiOutlineLogin
-                    size="30"
-                    style={{
-                      marginLeft: "10px",
-                      color: "#fff",
-                      cursor: "pointer",
-                      backgroundColor: "var(--dark)",
-                    }}
-                  ></AiOutlineLogin>
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className={clsxLoginPopup()}
-                  >
-                    <SigninForm
-                      loginCallback={() => toggleLoginPopup(!loginPopup)}
-                    ></SigninForm>
-                  </div>
+          <div className={classes.login} onClick={(e) => e.stopPropagation()}>
+            <a
+              onClick={() => {
+                toggleLoginPopup(!loginPopup);
+              }}
+            >
+              <div className={clsxLoginContainer()}>
+                <AiOutlineLogin
+                  size="30"
+                  style={{
+                    marginLeft: "10px",
+                    color: "#fff",
+                    cursor: "pointer",
+                    backgroundColor: "var(--dark)",
+                  }}
+                ></AiOutlineLogin>
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className={clsxLoginPopup()}
+                >
+                  <SigninForm
+                    loginCallback={() => toggleLoginPopup(!loginPopup)}
+                  ></SigninForm>
                 </div>
+              </div>
 
-                <div className={clsxUserContainer()}>
-                  <AiOutlineUser
+              <div className={clsxUserContainer()}>
+                <AiOutlineUser
+                  onClick={() => {
+                    toggleUserPopup(!userPopup);
+                  }}
+                  size="30"
+                  style={{
+                    marginLeft: "10px",
+                    color: "#fff",
+                    cursor: "pointer",
+                    backgroundColor: "var(--dark)",
+                  }}
+                ></AiOutlineUser>
+                <div className={clsxUserPopup()}>
+                  <AiOutlineLogout
                     onClick={() => {
-                      toggleUserPopup(!userPopup);
+                      signOut();
                     }}
                     size="30"
                     style={{
                       marginLeft: "10px",
-                      color: "#fff",
+                      color: "black",
                       cursor: "pointer",
-                      backgroundColor: "var(--dark)",
                     }}
-                  ></AiOutlineUser>
-                  <div className={clsxUserPopup()}>
-                    <a
-                      onClick={() => {
-                        signOut();
-                      }}
-                    >
-                      <AiOutlineLogout
-                        size="30"
-                        style={{
-                          marginLeft: "10px",
-                          color: "black",
-                          cursor: "pointer",
-                        }}
-                      ></AiOutlineLogout>
-                    </a>
-                  </div>
+                  ></AiOutlineLogout>
                 </div>
-              </a>
-            </div>
+              </div>
+            </a>
           </div>
         </div>
       </nav>

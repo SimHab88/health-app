@@ -18,3 +18,11 @@ export const authQuery = gql`
     myId
   }
 `;
+
+export const getSuggestionsMutation = gql`
+  query ($str: String!) {
+    diseases(where: { name_STARTS_WITH: $str }) {
+      name
+    }
+  }
+`;
